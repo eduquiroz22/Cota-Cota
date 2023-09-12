@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set 1 Cota Cota</title>
+    <style>
+        .grid-row {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+        }
+        .grid-col {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        .full-width {
+            width: 80vw;
+            /*max-height: calc(100vh - 30px)*/
+        }
+    </style>
+</head>
+<body>
+    <h1>Set 1 Cota Cota</h1>
+    <div class="grid-container" id="grid-container">
+        <!-- Los botones se generarán aquí dinámicamente -->
+    </div>
+    <script>
+        const gridContainer = document.getElementById('grid-container');
+        var numSignals = 20;
+        var numCols = 10;
+
+        var numRowsFinal = numSignals%10;
+        var numRows = (numSignals-numRowsFinal)/numCols;
+        if(numRowsFinal !== 0){
+            numRows = numRows+1;
+        }
+
+        for (let row = 1; row <= numRows; row++) {
+            const rowDiv = document.createElement('div');
+            rowDiv.classList.add('grid-row');
+            gridContainer.appendChild(rowDiv);
+
+            if(row == numRows && numRowsFinal !== 0){
+                numCols = numRowsFinal;
+            }
+
+            for (let col = 1; col <= numCols; col++) {
+                var nSignal = (row-1)*10+col
+                const colDiv = document.createElement('div');
+                colDiv.classList.add('grid-col')
+                const button = document.createElement('button');
+                button.textContent = `Signal ${nSignal}`;
+                button.setAttribute('onclick', `mostrarImagen(${row},${nSignal})`);
+                colDiv.appendChild(button);
+
+                rowDiv.appendChild(colDiv);
+            }
+
+            const rowDetails = document.createElement('details');
+            rowDetails.id = `detail${row}`;
+            gridContainer.appendChild(rowDetails);
+
+            const signalDiv = document.createElement('div');
+            signalDiv.classList.add('grid-row');
+            rowDetails.appendChild(signalDiv);
+
+            const imgDiv = document.createElement('div');
+            imgDiv.classList.add('grid-col');
+            signalDiv.appendChild(imgDiv);
+
+            const rowImg = document.createElement('img');
+            rowImg.id = `imagen${row}`;
+            rowImg.alt = "Imagen";
+            imgDiv.appendChild(rowImg);
+
+        }
+
+
+        const detailsElements = document.querySelectorAll('details');
+        
+        detailsElements.forEach(detailsElement => {
+            detailsElement.addEventListener('toggle', () => {
+                if (detailsElement.open) {
+                    detailsElements.forEach(otherElement => {
+                        if (otherElement !== detailsElement && otherElement.open) {
+                            otherElement.open = false;
+                            const img = otherElement.querySelector('img');
+                            img.classList.remove('full-width');
+                        }
+                    });
+                    
+                    const img = detailsElement.querySelector('img');
+                    img.classList.toggle('full-width');
+                }
+            });
+        });
+        function mostrarImagen(row, nSignal) {
+
+            
+            const imgElement = document.getElementById(`imagen${row}`);
+            
+            const imageUrl = obtenerUrlImagen(nSignal);
+            
+            imgElement.src = imageUrl;
+            
+            const detElement = document.getElementById(`detail${row}`);
+            detElement.open = true;
+            
+        }
+
+        // Función para obtener la URL de la imagen según el número del botón
+        function obtenerUrlImagen(nSignal) {
+            return `images/signal${nSignal}.jpg`;
+        }
+    </script>
+</body>
+</html>
